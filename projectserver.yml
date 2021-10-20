@@ -36,10 +36,10 @@ Resources:
         FromPort: 80
         ToPort: 80
         CidrIp: 0.0.0.0/0
-      - IpProtocol: tcp
-        FromPort: 22
-        ToPort: 22
-        CidrIp: 0.0.0.0/0
+      # - IpProtocol: tcp
+      #   FromPort: 22
+      #   ToPort: 22
+      #   CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
       - IpProtocol: tcp
         FromPort: 0
@@ -55,9 +55,10 @@ Resources:
           apt-get install apache2 -y
           systemctl start apache2.service
           cd /var/www/html
-          echo "Udacity Demo Web Server Up and Running!" > index.html          
+          aws s3 cp s3://udacity-demo-1/udacity.zip .
+          unzip -o udacity.zip          
       ImageId: ami-0ac73f33a1888c64a
-      KeyName: SecureKey
+      # KeyName: SecureKey
       SecurityGroups:
       - Ref: WebServerSecGroup
       InstanceType: t3.medium
@@ -110,10 +111,10 @@ Resources:
   WebAppTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      HealthCheckIntervalSeconds: 15
+      HealthCheckIntervalSeconds: 10
       HealthCheckPath: /
       HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 10
+      HealthCheckTimeoutSeconds: 8
       HealthyThresholdCount: 2
       Port: 80
       Protocol: HTTP
@@ -121,3 +122,6 @@ Resources:
       VpcId: 
         Fn::ImportValue:
           Fn::Sub: "${EnvironmentName}-VPCID"
+        Description: Load balancer public
+        Value:
+          Fn::Join: ["", ["http://", proje-WebAp-UGWZNM9FD9T7-1358314028.us-west-2.elb.amazonaws.com]]
