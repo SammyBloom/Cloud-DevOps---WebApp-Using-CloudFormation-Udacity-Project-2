@@ -122,6 +122,10 @@ Resources:
       VpcId: 
         Fn::ImportValue:
           Fn::Sub: "${EnvironmentName}-VPCID"
-        Description: Load balancer public
-        Value:
-          Fn::Join: ["", ["http://", proje-WebAp-UGWZNM9FD9T7-1358314028.us-west-2.elb.amazonaws.com]]
+
+Outputs:
+  publicDns:
+    Description: A reference to the DNS name from load balancer
+    Value: !Join [ "", [ 'http://', !GetAtt WebAppLB.DNSName ]]
+    Export:
+      Name: !Sub ${EnvironmentName}-LB-DNSName        
